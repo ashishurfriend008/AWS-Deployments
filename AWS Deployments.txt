@@ -1,0 +1,526 @@
+Link - https://www.youtube.com/playlist?list=PLVz2XdJiJQxxurKT1Dqz6rmiMuZNdClqv
+(Java Techie)
+
+>> Aws is a cloud infrastructure where we can host our applications.
+
+>> In 2006, AWS started to offer IT services to the market in the form of web services.Now it is known as cloud computing.
+
+>> Cloud computing means refers to storing and accessing data over internet.
+
+>> In AWS, it will offer us to create an virtual machine.Inside that virtual machine we can add a server, we can add a database and also there are multiple cloud infrastructure we can build it. With this cloud, we don't need to plan for servers and other IT infrastructures.Instead, this service can instantly spin of 100 or 1000 of servers in a minute.If we increase the number of servers then we can directly specify number of instances we want. In this way, we can easily scale up our application in cloud infrastructure and deliver results faster.
+
+>> In AWS, we just need to create a virtual machine and add services that we want as per our requirement and rest of the things will be take care by AWS itself.
+
+>> In AWS, this virtual machine is called as EC2 instance. And EC2 stands for elastic compute cloud.
+
+>> Create an account in AWS - Go to, https://aws.amazon.com.If you have aws account then go to https://aws.amazon.com/console and sign in.
+
+>> In AWS, S3 is the storage where we can add JAR and WAR files.
+
+>> There are seven simple steps to create EC2 instance.Click on the service section, we will find the EC2 link and click on EC2 link and get into it.Now, click on Launch instance an notice there are seven steps.
+
+--> Ist Step :- Choose an amazon machine image which is nothing we need to choose an operating system.Choose Amazon AMI 2018 for free because this got php,java,mysql installers which is inbuild to this virtual machine.
+
+--> 2nd Step :- Choose an instance type :- We choose 2nd one  i.e. free tier eligible.And click review and launch.However, before doing that, click configure and instance details and here we can choose number of instances we want.Lets say we want to up five virtual machines and then we can provide 5.
+
+--> 3rd Step :- After that, click add storage.Here, by default we have 8 GB free space, so nothing to change. After that, click on Add tags.
+
+--> 4th Step :- In add tags, for specific project suppose springboot or angular project we can add tags.So, with these tags we can easily identify application.Next click configure security group.
+
+--> 5th Step :- In configure security group, click add rule and specify 8080 and on this port we will run springboot application.Moreover, from source we can add Anywhere so that anyone can access our application or there is another option i.e. My IP - only from IP address the application can be accessed.In Type section add custom TCP.
+
+--> 6th Step :-  Now, click Review and Lunch
+
+--> 7th Step :- Just review once and if everything that looks ok then click launch.If we are generating first time then select Create a new key pair and give a name to it.And, click Download Key Pair.This file contains all our host information, username and everything because whenever we want to connect to EC2 instance from your computer we need to pass this file as we are not going to pass username and password.
+
+After few minutes, instance state would be running from pending.Give the instance name as you wish.
+
+Click on, connect we will find host information, username and key pair file.
+
+If we are not going to use EC2 instance then go to Actions --> Instance State --> Stop/Start.
+
+Deploy springboot application in EC2 instance
+---------------------------------------------
+>> Create a spring boot application and generate JAR using "mvn clean install" command.
+
+>> We need to deploy spring boot application in EC2 instance. As our spring boot application is in local machine, so we need to download and install putty in order to connect EC2 instance. If we install putty we will also find puttygen as well.
+
+>> We need key pair file here to connect from putty from our local machine to EC2 instance.
+
+>> Open puttygen tool and load key file.As we try from windows we need to make this key file compatible. By the help of puttygen we will generate one more file. After that, save private key and close puttygen. We can find the new file created from puttygen.By using newly created key we can connect our local machine to EC2 instance.
+
+>> Go to EC2 instance in AWS and click connect and copy the hostname and username. After that, go to putty and input the hostname, click on Data which is under connection and give username and come to SSH --> Auth --> Browse and get the newly generated key file and click open. After a while, it will connect successfully. In order to verify the username type command "whoami" and enter.
+
+>> After logged in to putty, move to the root directory by  sudo -i and enter. Then, we will notice that we will be in EC2 instance.
+
+>> To check java verion available in EC2 instance type java -version and detected 1.7 but our application we are using 1.8. So, we need to install java version 1.8 in our virtual machine
+
+>> Run command "yum install java-1.8.0-openjdk" to install java version 1.8 in virtual machine. In between, it will ask Is it ok y/n :- y. Again, if you type java -version then it will show 1.7 because we didn't set the path yet. To set the path type command "alternatives --config java".Then, we will observe two open jdks i.e. 1.7 and 1.8. Choose 2 and enter.After that, again type java -version and we will see 1.8.
+
+Now, our virtual machine is ready now.
+
+>> Go to AWS console --> Services --> S3. Here, we just need to create a S3 bucket and inside our bucket we will place our springboot JAR.And then from that bucket our EC2 instance will fetch the JAR and execute. However, we are done with the EC2 instance.
+
+>> click S3 and click create a new bucket.In General Configuration, provide bucket name, unblock all public access and acknowledge it. After that, click create a bucket.After a while, bucket will be created.
+
+>> Click on bucket which will redirect to Upload and Create folder page.
+
+>> Click Upload, Just drag and drop target --> JAR from IntelliJ --> Upload page and click on Upload.
+
+>> After sometimes, JAR will be uploaded successfully.Now, click on this JAR and make this JAR as public. Copy the object URL and with this URL we will get the JAR from EC2 instance and then we will run it. 
+
+>> JAR is present inside bucket which is public and we need to make JAR also public.Just click on "Make public".
+
+>> Go to EC2 instance and fetch the JAR from S3 storage.For this, go to putty tool, type command wget copy paste this object URL, so that we will download JAR from S3 storage to EC2 instance.After a while, its downloaded the JAR.
+
+>> check JAR is present or not - type command ls which will show the JAR
+
+>> Execute the JAR - java -jar JAR_NAME. Now, we are just running our springboot application in EC2 instance.We will see tomcat started on port 8080.This port had been configured while creating EC2 instance.
+
+>> Get IP address for accessing our application - Go to AWS Services --> EC2 --> Running instance.Here we will come down and copy the IP i.e. Public DNS 
+
+Go to browser, http://IP:8080/
+
+Now, we can able to access our springboot application from EC2 instance. This is how we can deploy our springboot application into EC2 instance and add our JAR in S3 storage.
+
+Deploy Spring Boot Applications Using Elastic Beanstalk(Without creating EC2 instance & jar file to S3 bucket)
+--------------------------------------------------------------------------------------------------------------
+>> Create a spring boot application and do packaging as War because we need to deploy this tomcat server.Run mvn clean install to generate the WAR file.
+
+>> Go to AWS console --> Services --> search Elastic Beanstalk --> Create Application --> Specify application name, we can also specify the key and value as Tag(optional), set platform as Tomcat - it will internally use tomcat 8.5, Application code - Upload your code, Source code origin - choose file(i.e. Project WAR file) --> Create application.
+
+>> In console, it will create EC2 instance and use the S3 storage internally which will be taken care by Elastic beanstalk.
+
+>> Finally, it will deploy our springboot application to Tomcat.Url is generated through which it can access our application.
+
+Amazon API Gateway
+------------------
+API Gateway --> Elastic BeanStalk --> Spring Boot
+
+Once we host spring boot application to Elastic beanstalk and all the endpoint of our application need to configured in API gateway.So, that user can send request to API gateway.Now, API gateway will route that particular request to corresonding application which is hosted in elastic beanstalk. As a user, we no need to Elastic beanstalk.
+
+>> Create a spring boot application with web, lombok as dependencies and packaging as JAR.Change server.port=5000 in application.properties. 
+
+>> Now, build the application, "mvn clean install" to create JAR.
+
+>> Now, go to AWS console --> Elastic Beanstalk --> Create a new environment --> Select web server environment --> Click Select --> In Create a web server environment, specify application name, Environment information - specify environment name, specify Domain (url will looks like), Platform - java, version as java 8, platform version - 3.1.0(Recommended), Application Code - Upload your code, local file - Choose file(springboot project JAR) --> Create environment.
+
+It will take couple of minutes to create a environment with JAR.
+
+>> Application deployed to Elastic beanstalk.
+
+>> Now, configure all spring boot application endpoints in API gateway.
+
+>> Go to AWS console, Services --> search API Gateway --> Click, Create API --> Click Build, Rest API --> Choose the protocol - select REST, Create new API - select New API/ Import from Swagger 
+Note - If we already have Swager documentation with us click on "Import from Swagger" and click "Select Swagger File", Then it will generate all the endpoint from our swagger file.    
+
+Give API name, Endpoint Type - Regional --> click Create API
+
+>> In Resources section we need to specify all endpoint and HTTP method type.
+
+>> Specify root url - Click Actions and select Create Resource. Give resource name and click create resource.
+Now, In resource section /book-service is the root url.
+
+>> Click Actions - Click GET - select HTTP, Click on HTTP Proxy integration, specify endpoint URL(GET URL i.e. configuring application which is in Elastic beanstalk), Click on Save.After that, we will see entire flow.
+
+Similarly for POST - Click POST - select HTTP, Click on HTTP Proxy integration, specify endpoint URL(POST URL i.e. configuring application which is in Elastic beanstalk), Click on Save.After that, we will see entire flow.
+
+Note -  If we have multiple microservices then we will have multiple resources.
+
+>> Click on Actions, select Deploy API and give details asked and click Deploy.
+
+>> Go to Stages, we have two URLs for GET and POST. These URls will be our API Gateway URLs.
+
+User will directly hit the API Gateway URLs and API Gateway will talk to our elastic beanstalk and it will load our application. Thus, API Gateway will help to route the request to corresponding microservices.
+
+Run Springboot Docker Image On AWS ECS
+--------------------------------------
+Amazon ECS - ECS stands for Elastic Container Service. ECS is a fully managed container orchestration service which eleminate the need to install, operate and scale your own container orchestration and cluster management infrastructure. In ECS if we create a ECS cluster then we can run N number of docker container without having any additional configuration.However, without ECS if we will do the same in docker container then we need to managed the container by own i.e. we need to configure container and scale up container by own which is really a tedious job for developer.To oversome this issue Amazon came up with amazon orchestration service which is ECS. As a developer, we will only focus on designing, building and running containerized application and managing container and infrastructure handled by ECS itself.
+
+AWS Fargate - It is a serverless compute engine for containers that works with ECS and it allow us to run containers without having provision, configure and scaling.It is also eliminate the need of EC2 instance.Basically, AWS Fragate will help us to auto configure container and seemless scaling. We no need to scale it manually. Suppose, we have 10 containers deployed in this AWS fargate, if one container goes down then AWS Fargate will take care to spin up other containers.That is what advantage of AWS Fargate over AWS ECS.
+
+Springboot Application --> Docker Image --> Docker Hub --> AWS ECS --> In AWS ECS, will create AWS Fargate cluster and will run that docker container. That means, we will run the springboot application dockerized image in this AWS Fargate.
+
+>> Create a springboot application
+
+>> In IDE terminal, execute "mvn spring-boot:build-image" as per spring 2.3.0. Before, this command being executed  make sure we run the docker terminal.
+
+>> After a while, image will be build successfully.
+
+>> To verify the image, execute "docker image ls" in docker terminal.It will show all image available.
+
+>> Run this docker image generated in docker container - For this, go to IDE terminal and execute "run --tty --publish 8080:8080 docker_image_name"
+
+>> It will start our application - Go to browser, http://localhost:8080. Instead of localhost provide http://IP:8080.
+
+Now, we created docker image and able to run it in docker container.
+
+>> Add a tag to docker image - In docker terminal execute "docker tag docker_image give_tag_name/docker_image". With tag name we can find image.
+
+>> To verify docker image tag - In docker terminal, execute "docker image ls" which will verify docker image with tag. 
+
+>> Push image to docker hub - In docker terminak, execute "docker push give_tag_name/docker_image". It will take couple of seconds to push docker image to docker hub.
+
+>> Login to docker hub, go to repositories and see the docker image with tag is pushed.
+
+
+>> Go to AWS console, Services --> search ECS(Elastic Container Service) --> In ECS page, click Task Definations --> Create new task defination --> AWS Fargate or EC2 --> Choose AWS Fargate --> next --> Configure task and container defination - Give task defination name, select Task Role none, Task size(how much memory we want to specify for this task), select Task memory as 1GB, select CPU memory as 0.5, Add container - give container name, image - give image name thats pulled from docker hub i.e. docker.io/tagname/docker_image. We are trying to pull docker image with tag from AWS ECS, Specify memory limit upto 1024, Port mappings - 8080(docker container run), 80 --> Click Add --> Click create
+
+>> Click in view task defination and will see that we have created a new task.
+
+>> Creation of AWS Fargate cluster to run our particular task - Click on Clusters --> Next Step --> Cluster Configuration - cluster name --> Click on create. Now Cluster is created and we can view the custer.From this custer we need to add new task.We land in Run Task page --> Click Launch type as FARGATE, give task defination, cluster name, Select cluster VPC default one, subnets choose firstone, Security group - click on edit and specify security group name, Add All TCP and  All traffic in Type --> Click save --> Click Run task.
+
+>> Click on Task defination and we see the logs. To see complete logs go to Details and come down and click on view logs in CloudWatch
+
+>> Go to Incognito mode, http://IP/8080 in which application is up and running.
+
+This is how we run docker container in AWS ECS.
+
+Elastic Container Registry (ECR)
+--------------------------------
+It will act as repository where we can store our docker image.So, that going forward we can directly pull image from ECR itself.Than, we can run in AWS ECS and we can create AWS Farget cluster and we can run that image.So, we will replace docker hub with AWS ECR.
+
+Springboot Application --> Docker Image --> AWS ECR --> AWS ECS --> In AWS ECS, will create AWS Fargate cluster and will run that docker container  
+
+>> Login with AWS console, go to My Security Credentials from where we get the user access key and secret key.So, click on Create New Access Key --> Show access key --> We will find access key ID and Secret Access Key.Copy these in nodepad.We need to configure access key ID and secret access key in AWS CLI.   
+
+>> We need to install the anugular CLI from this https://awscli.amazonaws.com/AWSCLIV2.msi .
+
+>> Go to command prompt, and type aws configure and give access key ID, give the secret access key,specify your region which we will get from AWS console and on right top just check the region and default output format is json.
+Now, CLI is configured to AWS.
+
+>> Now, we will create ECR - Go to AWS console, search ECR --> Create a repository --> Create repository - give repository name --> Create repository.
+
+>> Copy URI
+
+>> Go To AWS ECR click and see there is no image.
+
+>> Login to ECR from AWS CLI - Go to AWS ECR and execute "aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin paste_URI"
+ Login Succeeded
+
+>> Go to Docker terminal and execute docker image ls
+
+>> In Docker terminal, execute "docker tag docker_image:tag_name URI_ECR" which will tag image to our URI.
+
+>> In Docker terminal, docker push URI which will push image to ECR.
+
+>> Go to ECR repository and refresh to see the docker image. 
+
+Springboot serverless architecture using AWS lambda
+---------------------------------------------------
+Serverless basically means we just run run without any server. We no need to maintain or manage the server.As a developer we just need to focus how to build our logic.
+
+Advantages 
+----------
+>> Zero server management - No server required to manage or execute application scripts.
+
+>> Flexible scaling - Based on incoming request of our application it has the capability to auto scale.
+
+>> No Idle capacity - No need to pay for idle capacity only we need to pay for compute time we will use.Suppose, we hosted our application to AWS lambda then if someone is executing our function then only we need to pay for it.
+
+AWS lambda - It is a serverless computing service provided by Amazon to reduce the configuration of servers, OS. AWS lambda lets us run code without provisioning or managing servers - it scales automatically and only charges for the time our code is running.
+
+
+When we want to expose a web endpoint, a stream processor, or a task to cloud without depending on server and OS.
+
+--> Spring cloud function is the best example for serverless programming. Using functional interface we can simply expose endpoints as a function. Moreover, while we run spring cloud functional application we don't need server but still it start tomcat web server on default port 8080.This is because, for local testing this spring cloud added the embedded tomcat server.While we deploy on AWS lambda we don't need any server.
+
+@Bean
+public Function<String, String> reverse(){
+	return (input) -> new StringBuilder(input).reverse().toString();
+}
+
+We need to fire a curl url in the terminal of IDE in order to access the above endpoint.Here, the method name will act as endpoint url.
+"curl -H "Content-Type: text/plain" localhost:8080/reverse -d javatechie"
+
+o/p - eihcetavaj
+
+@Bean
+public Supplier<Book> getBook(){
+	return () -> new Book(101, "Core Java");
+}
+"curl -H "Content-Type: text/plain" localhost:8080/getBook"
+
+o/p - {"id":101, "name":"Core Java"}
+
+>> Create a springboot application having dependencies as lombok, AWS core.
+
+>> In POM.xml, add the below following dependencies and plugins
+	<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-function-adapter-aws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-events</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+	
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework.boot.experimental</groupId>
+                        <artifactId>spring-boot-thin-layout</artifactId>
+                        <version>${wrapper.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <shadedClassifierName>aws</shadedClassifierName>
+                </configuration>
+            </plugin>
+        </plugins>
+
+Note - This plugins are added because we need light weight JAR and usually our JAR size will be more than 10 MB.Suppose, we have 10 microservices than it is difficult to deploy that code in AWS lambda.Because 10 microservices it requires more than 100 MB.So, we need to downstream the size of our JAR.
+
+>>  In domain package, 
+Order.java
+----------
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Order {
+
+    private int id;
+    private String name;
+    private double price;
+    private int quantity;
+}
+
+>> In repository,
+OrderDao.java
+-------------
+@Repository
+public class OrderDao {
+
+    //write a method which return list of order object and hard coded four order object.Just treat as dummy database as we hardcoded the value here.
+    public List<Order> buildOrders(){
+        return Stream.of(
+                new Order(101, "Mobile", 20000, 1),
+                new Order(102, "Book", 999, 2),
+                new Order(278, "Book", 1466, 3),
+                new Order(953, "Jeans", 4499, 1)
+        ).collect(Collectors.toList());
+    }
+}
+
+>> In application main class,
+SpringbootAwsLambdaApplication.java
+-----------------------------------
+@SpringBootApplication
+public class SpringbootAwsLambdaApplication {
+
+    @Autowired
+    private OrderDao orderDao;
+
+    @Bean
+    public Supplier<List<Order>> orders() {
+        return () -> orderDao.buildOrders();
+    }
+
+    @Bean
+    public Function<String, List<Order>> findOrderByName() {
+        return (input) -> orderDao.buildOrders().stream().filter(order -> order.getName().equals(input)).collect(Collectors.toList());
+    }
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringbootAwsLambdaApplication.class, args);
+    }
+
+}
+
+We returned all the order object.We created two functions as endpoint and we will add these fucntions as AWS lambda.In springboot, lambda always search for request handler class, so we need to create a empty interface extending from springboot request handler.
+
+>> OrderHandler.java
+   -----------------
+public class OrderHandler extends SpringBootRequestHandler<String,Object> {
+}
+
+String as input and list of order as return type and we directly specify Object here.SpringBootRequestHandler interface we need, so that it helps us to serialize and deserialize object. Thats why we specify the type generic here.
+
+>> Lets create a JAR of our application.Go to Maven --> Lifecycle --> click intall(i.e. to run a JAR of it) 
+
+>> Now, go to AWS console --> Services and search lambda --> Create function --> Click on Author from scratch --> Give function name and choose Runtime support as Java 8 --> Create function.
+
+If we observe, it created a function.
+
+>> Go to Basic settings info, click on Edit and provide request handler class i.e. in Handler specify the handler class that is created i.e. OrderHandler(give packagename.OrderHandler) and click on the save.
+
+>> We have two functions, so we need to tell AWS lambda to call that particular function. Go to Environment variables and edit. Add environment variables i.e. Key as FUNCTION_NAME and Value as orders(name of function). After that, click save.
+
+>> Deploy JAR file - Go to Actions of Function code then upload a zip or jar file, so just click on that.Click upload and upload application JAR that is generated and save. 
+Now our code deployed to lambda.
+
+>> Now test - Click, configure test events.Spring cloud function has two function one is Orders and findOrderByName.Moreover, Orders will return you the list of order object and findOrderByName will return the order object based on the input i.e. the input will be your name.
+
+Trigger Spring Cloud Function On AWS Lambda Using API Gateway
+-------------------------------------------------------------
+API gateway is going to invoke our AWS lambda function i.e. spring cloud function. So, we are going to create API gateway as a trigger function.
+
+>> In AWS cloud, created a function i.e. javatechie-function. Click on that function.
+
+>> In Environment variables, we specified the function name as orders and also specified handler class as order handlers with fully qualified name.We can test this function from AWS lambda console at the top.
+
+>> Click on configure test event and we have GET method and don't have any paramater and click on test.After that, it will return list of order object.
+
+>> In API gateway, we just required generic request and response type. But as we have added String as request type and List<Order> as response type.
+
+@Bean
+    public Function<String, List<Order>> findOrderByName() {
+        return (input) -> orderDao.buildOrders().stream().filter(order -> order.getName().equals(input)).collect(Collectors.toList());
+    }
+
+However, API gateway doesn't understand the String datatype.In this case, whether we can add our own custom request and response wrapper class OR we can directly use API gateway given request and response type.But we will use API gateway request type.
+
+>> Go to OrderHandler class, instead of String we will give APIGatewayProxyRequestEvent as request and in response we will give List<Order> object.
+
+public class OrderHandler extends SpringBootRequestHandler<APIGatewayProxyRequestEvent,List<Order>> {
+}
+
+Now,simply change the same in function
+
+@Bean
+    public Function<APIGatewayProxyRequestEvent,List<Order>> findOrderByName() {
+        return (requestEvent) -> orderDao.buildOrders().stream().filter(order -> order.getName().equals(input)).collect(Collectors.toList());
+    }
+
+From this requestEvent we need to extract the input.
+
+For this APIGatewayProxyRequestEvent class there are multiple ways where we can pass input.We can pass as headers, we can pass as queryStringParameters, we can pass as PathParameters etc. But here, we will pass as queryStringParameters as we need one part of the request as part of URL.
+
+@Bean
+    public Function<APIGatewayProxyRequestEvent,List<Order>> findOrderByName() {
+        return (requestEvent) -> orderDao.buildOrders().stream().filter(order -> order.getName().equals(requestEvent.getQueryStringParameters().get("orderName"))).collect(Collectors.toList());
+    }
+requestEvent.getQueryStringParameters() return map and get("orderName") is the type.
+Now, we are filtering out the list of order object based on the input parameter and our input parameter is the orderName which we are going to pass as part of request URL.
+
+
+However, in the below method we didn't change any type because it is the supplier which will only return the object. That's why we specify the List<Order> object as we mentioned same in OrderHandler.
+
+ @Bean
+    public Supplier<List<Order>> orders() {
+        return () -> orderDao.buildOrders();
+    }
+
+>> Build a JAR out of it - Go to Maven --> Lifecycle --> install
+
+>> In AWS console, go to javatechie-function, click on "Add trigger" --> add API Gateway as select a Trigger --> API select a Create an API i.e. the new one --> select HTTP API while we can select REST API --> For security we can select open --> Click Add.
+
+After a while, we will see that API gateway will point to javatechie-fucntion which is the lambda function.Here, API gateway will act as trigger. So, once you trigger this URL it will directly hit our AWS lambda function i.e.javatechie-fucntion.
+
+Just come down the page, we will see the URL to trigger the API gateway.
+
+>> In Environment variable section, we need to specify the function name which we want to invoke.
+
+>> Now, we need to add the updated JAR file - Go to Function code section and click on Actions and select upload a .zip or .jar file. Click on upload and select the recent JAR file from application code base structure and save it. After a while, JAR uploaded successfully.
+
+>> Click on API gateway that it will trigger and click in endpoint link below and it will show all the response in the browser. It will show list of order object.
+
+>> If we want to access the findOrderByName function.Go to javatechie-function page, go to environment variables and click edit.In Environment variables there are Key and Value. In Key, FUNCTION_NAME is there and in Value give findOrderByName and save it.
+
+Now, we need to pass the QueryStringParameters.So, we will give Book and based on Book we will get two order object.
+
+Go to the URL and add ?orderName=Book in the URL and will get the two order object.
+
+Build a CI/CD in AWS using CodePipeline and CodeBuild
+-----------------------------------------------------
+In Elastic Beanstalk, we create a JAR and then we deploy to Elastic Beanstalk. However, in future we do any code changes then again we craete a JAR and then redeploy to Elastic Beanstalk.It seems repeated job for a developer.In order to make this whole process automated Amazon provided code pipeline services for contineous integration and contineous deployment.
+
+Integration Flow 
+----------------
+We are going to create one web application and push all the code changes to the Github.After that, we need to build the code i.e. AWS Code Build.
+
+Microservice App --> Github --> AWS Code Build --> Elastic Beanstalk
+			|				    |
+			|				    |	
+			|-----------------------------------|
+				AWS Pipeline								
+
+
+By writing one YML file i.e. buildspec.yml file that we need to tell the AWS Code Build to configure steps.We want to clean our package and install our package.Now, the AWS Code Build will take this buildspec.yml as a input and we will build our code.So, once this code build successful and after that the code need to deployed to Elastic Beanstalk. This entire process is taken care by AWS Code Pipeline. AWS Code Pipeline we can consider as Jenkins.It is not exactly Jenkins but whatever funcntionality acheving from Jenkins we can do the same in AWS Code Pipeline.
+
+>> Create a springboot application having spring web, lombok as dependencies. The JAR will be created as order-service.
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<finalName>order-service</finalName>
+	</build>
+
+>> Sync our code to Github - Go to Github and create a new repository and name it order-service. Go to IntellJ terminal, execute command git init and then execute git status to know the untracked files.Now, execute git add src, git add POM.xml and git add .gitignore.After that, git commit -m "first commit".
+
+>> Set remote repository - git remote add origin https://github.com/basahota/order-service.git
+
+>> Need to push all our changes to the remote repository - git push -u origin master
+
+>> Now, we will go to browser and see src, POM.xml and .gitignore committed successfully.
+
+>> Create buildspec.yml file in application and commit this file - Once the file created execute command git commit -m "added buildspec file". After that, 
+push the file to Github.
+
+buildspec.yml
+-------------
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo Entered the build phase...
+      - mvn clean package
+  post_build:
+    commands:
+      - echo Build completed successfully
+artifacts:
+  files:
+    - target/order-service.jar
+  discard-paths: yes
+
+>> Command to clear the terminal - cls
+
+>> Create Elastic Beanstalk environment - Go to AWS Management Console, click on Elastic Beanstalk. Create new environment and give application name as order - service, Environment name - OrderService-env, Domain - javatechie with region i.e. elasticbeanstalk.com. With this URL you can access my application, specify the platform as java, platform branch - java 8, Application code - Sample application.After that, click create environment.
+
+>> Configure AWS Code Build Inside AWS Code Pipeline - Checkout code from Git and build it then push it to elastic beanstalk.Go to AWS Management Console, search code pipeline. Click, create a pipeline and input name order-service-pipeline, select new service role, role name will be auto populated, click next, source provider is Github --> connect to Github, Repository - order-service, Branch - master, select Github webhooks. Now, click on next. In add build stage, Build provider - AWS CodeBuild, click on create project. In create build project, give project name as orderService, from environment select Managed image, Amazon Linux 2 as Operating System, Runtime as standard, use always latest image at runtime as image version, select new service role as service role, select use buildspec file, select cloudwatch logs in cloudwatch. Finally, click continue to CodePipeline. Than, again it will redirect to Add build stage page.Come down the page and click on next.
+
+>> Deploy our code - We would be deploying our code to elastic beanstalk.Go to elastic beanstalk all environments. In add deploy stage, choose AWS Elasticbeanstalk as deploy provider, application name - order-service, OrderService - env as environment.Click on next which will redirect to review page and then click Create pipeline.After that, we will get pipeline dashboard.
+
+ 
+
+
+
+
+
+
+
+
+
+
+ 
+
